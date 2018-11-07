@@ -6,7 +6,7 @@
     <input type="checkbox" v-model="editable">
     <input type="text" v-model="current" placeholder="Add new item" @keyup.enter="addItem"/>
     <br><br><br>
-    <Dropdown :data="items" v-model="val" :editable="editable" :on-key-pause="(str) => {this.items = []; for (let i = 0; i < 10; i++) items.push({Value: i, Text: str + i})}"/>
+    <Dropdown :data="items" v-model="val" :editable="editable" :on-key-pause="(str) => ajaxSimulation(str)"/>
     <br>  <br><br>
     <br>
     <label for="">Choosed: </label><p>"{{val ? items.filter(i => i.Value === val)[0] ? items.filter(i => i.Value === val)[0].Text : '' : ''}}"</p>
@@ -23,7 +23,6 @@ export default {
     items: [],
     val: null,
     editable: false,
-    console: window.console
   }),
   components: {
     Dropdown
@@ -35,6 +34,13 @@ export default {
     },
     alert: function(text) {
       window.alert(text)
+    },
+    ajaxSimulation: function (str) {
+        setTimeout(() => {this.items = [];
+          if (str.length > 2) {
+            for (let i = 0; i < 10; this.items.push({Value: ++i, Text: str + i}));
+          }
+        }, 4000)
     }
   }
 };

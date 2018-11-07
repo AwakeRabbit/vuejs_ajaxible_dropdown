@@ -115,6 +115,7 @@ a {
     padding: 5px;
     cursor: pointer;
     user-select: none;
+    outline: none;
   }
   .fake-background {
     display: none;
@@ -130,7 +131,9 @@ a {
     position: absolute;
     top: 26px;
     left: 0;
-    display: none;
+    height: 0;
+    opacity: 0;
+    overflow-y: hidden;
     z-index: 10000;
     background: #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -142,6 +145,7 @@ a {
     overflow-y: auto;
     max-height: 200px;
     user-select: none;
+    transition: all ease-in .3s;
   }
   li {
     cursor: pointer;
@@ -162,10 +166,34 @@ a {
     input {
       z-index: 10000;
     }
-    .fake-background,
-    ul {
+    .fake-background{
       display: block;
     }
+    ul {
+      overflow-y: auto;
+      opacity: 1;
+      height: auto;
+    }
   }
+  &.loading {
+    &:after {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 10px;
+      height: 10px;
+      border: solid 1px;
+      border-color: $green #fff;
+      box-shadow: 0 0 3px transparentize($color: $green, $amount: .2);
+      content: '';
+      border-radius: 50%;
+      animation: rotateLoading .5s linear infinite 0s ; 
+    }
+  }
+}
+@keyframes rotateLoading {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(180deg);}
 }
 </style>
