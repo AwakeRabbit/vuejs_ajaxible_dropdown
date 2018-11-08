@@ -1,9 +1,9 @@
 <template>
   <div class="dropdown" :class="{expanded, loading}">
-    <input type="text"  :readonly="!editable || !(expanded && editable)" v-on:click="showList" @keyup="checkList" ref="inp" />
-    <div class="fake-background" v-on:click="expanded = false"></div>
+    <input type="text"  :readonly="!(expanded && editable)" @click="showList" @keyup="checkList" ref="inp" />
+    <div class="fake-background" @click="expanded = false"></div>
       <ul>
-        <li v-for="i in items.filter(i => i.hidden !== true)" v-on:click="setValue(i.Value)" v-bind:key="i.Value" v-if="items.filter(i => i.hidden !== true).length > 0">
+        <li v-for="i in items.filter(i => i.hidden !== true)" @click="setValue(i.Value)" :key="i.Value" v-if="items.filter(i => i.hidden !== true).length > 0">
             
             {{i.Text}}
         </li>
@@ -26,7 +26,7 @@ export default {
     },
     timeout: {
       type: Number,
-      default: 3000
+      default: 1000
     },
     onKeyPause: {
       type: Function,
@@ -54,16 +54,21 @@ export default {
       this.$emit("input", this.Value)
     },
     checkList: function(event) {
+      let word = this.$refs.inp.value.trim()
+
+      if (word == '') {
+        return false;
+      } 
       if (this.onKeyPause != null) {
         if (event.keyCode == 13) {
             this.loading = true
-            this.onKeyPause(this.$refs.inp.value.trim())
+            this.onKeyPause(word)
             this.lastKeyUp = 0
         } else {
             this.lastKeyUp = new Date()
             setTimeout(() => {
               if (this.expanded) { 
-                if (new Date() - this.lastKeyUp >= this.timeout && this.lastKeyUp != 0) {
+                if (word == this.$refs.inp.value.trim() && (new Date() - this.lastKeyUp) >= this.timeout && this.lastKeyUp != 0) {
                     this.loading = true
                     this.onKeyPause(this.$refs.inp.value.trim())
                     this.lastKeyUp = 0
@@ -71,7 +76,7 @@ export default {
               } else {
                 this.lastKeyUp = 0
               }
-            } , 3000)
+            } , this.timeout)
         }
         
       }
@@ -96,6 +101,10 @@ export default {
     data: function(newVal, oldVal) {
       this.loading = false
       this.items = newVal || []
+      
+      if (this.editable === false && this.Value === null && this.Text === '' && newVal.length > 0) {
+          this.setValue(newVal[0].Value)
+      }
   }}
 }
 </script>
